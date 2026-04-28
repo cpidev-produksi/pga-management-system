@@ -1,0 +1,123 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ========================================== */
+/* Kustomisasi Popover Driver.js (Tutorial)   */
+/* ========================================== */
+
+/* 1. Kontainer Utama Popover */
+.driver-popover.driverjs-theme {
+    background-color: #ffffff; /* Background Putih */
+    color: #1f2937; /* Teks Abu Gelap (Gray-800) */
+    border-radius: 16px; /* Sudut Membulat (Rounded XL) */
+    padding: 20px; /* Padding yang lebih lega */
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04); /* Shadow yang lebih lembut & modern (Shadow-XL) */
+    border: 1px solid #f3f4f6; /* Border tipis agar lebih tegas di background gelap */
+    max-width: 400px; /* Batasi lebar agar tidak terlalu panjang */
+}
+
+/* 2. Judul (Title) */
+.driver-popover-title {
+    font-size: 1.25rem; /* Lebih besar sedikit (Text-XL) */
+    font-weight: 700; /* Bold */
+    color: #111827; /* Hitam Pekat (Gray-900) */
+    margin-bottom: 10px;
+    line-height: 1.4;
+}
+
+/* 3. Deskripsi (Body Text) */
+.driver-popover-description {
+    font-size: 0.95rem; /* Ukuran yang pas */
+    color: #4b5563; /* Abu Sedang (Gray-600) */
+    line-height: 1.6; /* Spasi antar baris yang nyaman dibaca */
+    margin-bottom: 20px; /* Jarak ke footer/tombol */
+}
+
+/* 4. Area Footer (Tempat Tombol & Progress) */
+.driver-popover-footer {
+    margin-top: 0; /* Reset margin bawaan */
+    display: flex;
+    align-items: center;
+    justify-content: space-between; /* Tombol di kanan, progress di kiri */
+}
+
+/* 5. Teks Progress (Contoh: "1 of 5") */
+.driver-popover-progress-text {
+    font-size: 0.85rem;
+    color: #9ca3af; /* Abu Terang (Gray-400) */
+    font-weight: 500;
+}
+
+/* ========================================== */
+/* Kustomisasi Tombol (Navigation Buttons)    */
+/* ========================================== */
+
+/* 6. Gaya Dasar SEMUA Tombol (Lanjut, Kembali, Close) */
+.driver-popover-footer .driver-popover-btn {
+    border-radius: 8px; /* Rounded-LG */
+    padding: 8px 16px; /* Padding yang pas */
+    font-size: 0.875rem; /* Text-SM */
+    font-weight: 600; /* Semi-Bold agar lebih tegas */
+    text-shadow: none !important; /* PENTING: Hilangkan semua efek bayangan teks */
+    box-shadow: none !important; /* Hilangkan shadow tombol bawaan */
+    transition: all 0.2s ease-in-out; /* Animasi hover yang halus */
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Update Bagian Tombol Next (Lanjut) */
+.driver-popover-footer .driver-popover-next-btn {
+    background-color: #2563eb !important; /* Biru */
+    color: #ffffff !important; /* Putih */
+    
+    /* FIX GLITCH TEXT */
+    text-shadow: none !important;      /* 1. Hapus bayangan teks */
+    -webkit-text-stroke: 0 !important; /* 2. Hapus outline/stroke teks */
+    filter: none !important;           /* 3. Hapus filter efek */
+    box-shadow: none !important;       /* 4. Hapus bayangan kotak tombol */
+    
+    /* Styling Standar */
+    border: 1px solid transparent !important;
+    border-radius: 6px !important;
+    padding: 6px 14px !important;
+    font-size: 14px !important;
+    font-weight: 500 !important; /* Gunakan font-weight sedang, jangan terlalu bold */
+    line-height: normal !important;
+    
+    /* Reset tampilan browser */
+    -webkit-appearance: none;
+    outline: none !important;
+}
+
+/* Efek Hover tetap ada */
+.driver-popover-footer .driver-popover-next-btn:hover {
+    background-color: #1d4ed8 !important; /* Biru gelap */
+    text-shadow: none !important; /* Pastikan saat hover juga tidak ada shadow */
+    box-shadow: none !important;
+}
+
+/* 8. Tombol "Kembali" (Prev) & "Tutup" (Close) - Gaya Sekunder */
+.driver-popover-footer .driver-popover-prev-btn,
+.driver-popover-footer .driver-popover-close-btn {
+    background-color: #f9fafb !important; /* Abu sangat terang (Gray-50) */
+    color: #4b5563 !important; /* Teks Abu (Gray-600) */
+    border: 1px solid #e5e7eb !important; /* Border abu tipis (Gray-200) */
+    margin-right: 8px; /* Jarak antar tombol */
+}
+
+/* Efek Hover Tombol Sekunder */
+.driver-popover-footer .driver-popover-prev-btn:hover,
+.driver-popover-footer .driver-popover-close-btn:hover {
+    background-color: #f3f4f6 !important; /* Abu sedikit lebih gelap (Gray-100) */
+    color: #1f2937 !important; /* Teks jadi lebih gelap (Gray-800) */
+    border-color: #d1d5db !important; /* Border jadi lebih tegas (Gray-300) */
+}
+
+/* 9. Menghilangkan Tombol Close (X) di Pojok Kanan Atas */
+/* Karena kita sudah punya tombol "Selesai" di bawah, tombol X ini redundan */
+.driver-popover-close-btn {
+    display: none !important;
+}
