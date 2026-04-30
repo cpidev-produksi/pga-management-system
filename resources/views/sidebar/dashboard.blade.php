@@ -73,15 +73,6 @@
         <div class="flex items-center gap-4">
             <h1 class="text-3xl font-bold text-gray-800">Visitor Dashboard</h1>
         </div>
-        <div class="flex items-center gap-4">
-        {{-- TAMBAHAN: Tombol Tutorial --}}
-        <button onclick="window.startDashboardTour()" 
-                class="hidden sm:inline-flex items-center gap-2 px-3 py-1.5 text-sm font-medium text-blue-600 bg-blue-50 hover:bg-blue-100 rounded-full transition-colors border border-blue-100"
-                title="Putar Ulang Tutorial">
-            <i class="fa-regular fa-circle-question"></i>
-            <span>Panduan</span>
-        </button>
-    </div>
     </header>
 
     <div class="grid grid-cols-1 xl:grid-cols-3 gap-8 mt-8">

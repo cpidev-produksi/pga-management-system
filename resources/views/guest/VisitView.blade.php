@@ -64,14 +64,7 @@
     <main class="flex-grow flex items-center justify-center p-4">
         
         <div id="main-page" class="relative container-card page-content max-w-4xl p-10 text-center flex flex-col items-center justify-center min-h-[400px] bg-white rounded-2xl shadow-xl">
-            
-            <button onclick="toggleModal('videoModal')" class="absolute top-5 right-5 flex items-center gap-2 text-gray-400 hover:text-blue-600 transition-colors duration-200 group" title="Lihat Tutorial">
-                <span class="text-sm font-medium hidden group-hover:block transition-all">Tutorial</span>
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"></path>
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                </svg>
-            </button>
+
             <div class="bg-blue-50 p-4 rounded-full mb-6">
                 <svg class="w-16 h-16 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
