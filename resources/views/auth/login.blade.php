@@ -116,7 +116,7 @@
         </form>
         
         <div class="mt-8 text-center form-element">
-            <p class="text-xs text-gray-400">© 2024 PGA Management. All rights reserved.</p>
+            <p class="text-xs text-gray-400">© 2026 PGA Management. All rights reserved.</p>
         </div>
     </div>
 
