@@ -14,22 +14,19 @@ class UserSeeder extends Seeder
         // 1. Buat User Admin (Tanpa role_uuid)
         $admin = User::create([
             'name' => 'Aji Andana',
-            'email' => 'admin@pga.com',
-            'password' => Hash::make('semangat'),
+            'email' => 'aji.andana@cp.co.id',
+            'password' => Hash::make('semangat45mengudara'),
             'is_contactable' => true,
             'email_verified_at' => now(),
-            // 'role_uuid' => ...  <-- HAPUS BARIS INI (JANGAN ADA LAGI) 
-            // 'department_uuid' => ... (Biarkan jika Anda masih pakai department)
         ]);
 
         // 2. Assign Role menggunakan Spatie
-        // Pastikan Role 'Admin' sudah dibuat di RolePermissionSeeder sebelumnya
         $admin->assignRole('Admin');
 
         // --- Contoh User Lain ---
         $staff = User::create([
-            'name' => 'Staf Biasa',
-            'email' => 'staff@pga.com',
+            'name' => 'Lobby Staff',
+            'email' => 'ajiandana@gmail.com',
             'password' => Hash::make('password'),
             'is_contactable' => true,
         ]);
