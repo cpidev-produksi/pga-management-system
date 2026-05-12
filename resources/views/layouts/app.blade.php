@@ -224,7 +224,7 @@
                     <p class="text-[10px] leading-relaxed text-gray-400 font-medium select-none transition-all duration-300 whitespace-nowrap"
                        :class="isDesktopMini ? 'lg:w-0 lg:h-0 lg:opacity-0 lg:overflow-hidden' : 'w-auto opacity-100'">
                         All system develop by<br>
-                        <span class="font-bold text-gray-500">Team 4.0</span><br>
+                        <span class="font-bold text-gray-500">Team Jateng Improvement</span><br>
                         Plant - Salatiga
                     </p>
                 </div>

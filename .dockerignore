@@ -1,0 +1,10 @@
+vendor/
+node_modules/
+.git/
+.gitignore
+docker-compose*.yml
+.env
+storage/logs/*.log
+bootstrap/cache/*.php
+npm-debug.log
+yarn-error.log
