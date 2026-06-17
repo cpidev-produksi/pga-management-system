@@ -519,7 +519,7 @@
             @endcan
 
             // --- DYNAMIC: MENU ROLE ACCESS (Khusus Admin) ---
-            @role('Admin')
+            @role('Super Admin')
             tourSteps.push({ 
                 element: '#tour-menu-roleaccess', 
                 popover: { title: 'Menu Role & Access', description: 'Atur peran dan hak akses user disini.', side: "right", align: 'center' }

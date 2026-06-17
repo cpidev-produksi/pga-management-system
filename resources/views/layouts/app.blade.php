@@ -138,7 +138,7 @@
                     @endcan
 
 
-                    @role('Admin')
+                    @role('Super Admin')
                         <li>
                             <a id="tour-menu-roleaccess" href="{{ route('roles.index') }}" 
                                class="flex items-center gap-4 py-3 rounded-lg font-medium transition-all duration-300 group

@@ -4,361 +4,421 @@
     <title>Detail Visitor - {{ $visitor->name }}</title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <style>
-        /* --- RESET & GLOBAL --- */
         body {
             font-family: 'Helvetica', 'Arial', sans-serif;
-            font-size: 13px;
-            color: #333;
-            line-height: 1.5;
+            font-size: 12px;
+            color: #1a1a2e;
+            line-height: 1.6;
             margin: 0;
-            padding: 0;
+            padding: 24px 32px;
+            background: #fff;
         }
 
-        /* --- HEADER (KOP SURAT) --- */
-        .header-container {
-            text-align: center;
-            border-bottom: 3px solid #2c3e50;
-            padding-bottom: 20px;
-            margin-bottom: 30px;
-        }
-        .company-name {
-            font-size: 22px;
-            font-weight: bold;
-            color: #2c3e50;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            margin-bottom: 5px;
-        }
-        .doc-title {
-            font-size: 16px;
-            color: #7f8c8d;
-            font-weight: normal;
-            margin-top: 0;
-        }
-        .meta-info {
-            margin-top: 10px;
-            font-size: 11px;
-            color: #555;
-        }
-
-        /* --- SECTION HEADERS --- */
-        .section-title {
-            background-color: #f0f2f5;
-            color: #2c3e50;
-            padding: 8px 10px;
-            font-size: 14px;
-            font-weight: bold;
-            border-left: 5px solid #2c3e50;
-            margin-top: 25px;
-            margin-bottom: 10px;
-            text-transform: uppercase;
-        }
-
-        /* --- TABLES --- */
-        table {
+        /* ── KOP ── */
+        .kop {
+            display: table;
             width: 100%;
-            border-collapse: collapse;
-            margin-bottom: 15px;
+            border-bottom: 2px solid #c8102e;
+            padding-bottom: 16px;
+            margin-bottom: 24px;
         }
-        th, td {
-            padding: 10px;
-            vertical-align: top;
-            text-align: left;
-            border-bottom: 1px solid #eee;
+        .kop-left {
+            display: table-cell;
+            vertical-align: middle;
+            width: 64px;
         }
-        th {
-            width: 35%;
-            color: #555;
+        .kop-logo {
+            width: 52px;
+            height: 52px;
+        }
+        .kop-center {
+            display: table-cell;
+            vertical-align: middle;
+            text-align: center;
+            padding: 0 12px;
+        }
+        .kop-company {
+            font-size: 17px;
             font-weight: bold;
-            background-color: #fff;
-        }
-        td {
-            color: #000;
-            font-weight: 500;
-        }
-        tr:nth-child(even) th, 
-        tr:nth-child(even) td {
-            background-color: #fcfcfc;
-        }
-
-        /* --- BADGES (STATUS) --- */
-        .badge {
-            display: inline-block;
-            padding: 4px 8px;
-            border-radius: 4px;
-            font-size: 11px;
-            font-weight: bold;
+            color: #1a1a2e;
+            letter-spacing: 0.5px;
             text-transform: uppercase;
+            margin: 0 0 2px 0;
         }
-        .badge-success {
-            background-color: #d1e7dd;
-            color: #0f5132;
-            border: 1px solid #badbcc;
+        .kop-plant {
+            font-size: 13px;
+            color: #c8102e;
+            font-weight: bold;
+            margin: 0 0 2px 0;
         }
-        .badge-warning {
-            background-color: #fff3cd;
-            color: #664d03;
-            border: 1px solid #ffecb5;
+        .kop-doc {
+            font-size: 10px;
+            color: #888;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            margin: 0;
         }
-        /* Tambahan Badge Merah untuk Checkout */
-        .badge-danger {
-            background-color: #f8d7da;
-            color: #842029;
-            border: 1px solid #f5c2c7;
+        .kop-right {
+            display: table-cell;
+            vertical-align: middle;
+            text-align: right;
+            width: 120px;
+        }
+        .kop-id-label {
+            font-size: 9px;
+            color: #aaa;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .kop-id-val {
+            font-size: 10px;
+            color: #555;
+            word-break: break-all;
+        }
+        .kop-date {
+            font-size: 10px;
+            color: #888;
+            margin-top: 4px;
         }
 
-        /* --- LIST STYLING --- */
-        ul.custom-list, ol.custom-list {
-            margin: 0;
-            padding-left: 20px;
+        /* ── STATUS BAR ── */
+        .status-bar {
+            display: table;
+            width: 100%;
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            padding: 10px 14px;
         }
-        .member-item {
-            margin-bottom: 8px;
-            padding-bottom: 8px;
-            border-bottom: 1px dashed #ddd;
-        }
-        .member-item:last-child {
-            border-bottom: none;
-        }
-        .member-name {
+        .status-bar-left { display: table-cell; vertical-align: middle; }
+        .status-bar-right { display: table-cell; vertical-align: middle; text-align: right; }
+        .visitor-name {
+            font-size: 16px;
             font-weight: bold;
-            font-size: 13px;
-            color: #2c3e50;
+            color: #1a1a2e;
+            margin: 0 0 2px 0;
         }
-        .member-detail {
+        .visitor-company {
             font-size: 11px;
             color: #666;
-            margin-top: 2px;
+            margin: 0;
+        }
+        .badge {
+            display: inline-block;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: bold;
+            letter-spacing: 0.3px;
+        }
+        .badge-success  { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+        .badge-warning  { background: #fff3cd; color: #856404; border: 1px solid #ffeaa7; }
+        .badge-danger   { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+
+        /* ── SECTION ── */
+        .section {
+            margin-bottom: 18px;
+        }
+        .section-title {
+            font-size: 10px;
+            font-weight: bold;
+            color: #c8102e;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            padding: 0 0 5px 0;
+            margin: 0 0 8px 0;
+            border-bottom: 1px solid #f0f0f0;
         }
 
-        /* --- FOOTER --- */
-        .footer {
-            margin-top: 50px;
-            text-align: right;
-            font-size: 10px;
-            color: #999;
-            border-top: 1px solid #eee;
-            padding-top: 10px;
+        /* ── TABLE ── */
+        table { width: 100%; border-collapse: collapse; }
+        .info-table th,
+        .info-table td {
+            padding: 7px 8px;
+            vertical-align: top;
+            text-align: left;
+            border-bottom: 1px solid #f4f4f4;
         }
+        .info-table th {
+            width: 32%;
+            color: #888;
+            font-weight: normal;
+            font-size: 11px;
+            white-space: nowrap;
+        }
+        .info-table td {
+            color: #1a1a2e;
+            font-weight: 500;
+            font-size: 12px;
+        }
+
+        /* ── 2-COLUMN GRID ── */
+        .grid-2 { display: table; width: 100%; }
+        .grid-col { display: table-cell; vertical-align: top; width: 50%; }
+        .grid-col:first-child { padding-right: 12px; }
+        .grid-col:last-child  { padding-left: 12px; }
+
+        /* ── MEMBER LIST ── */
+        .member-item {
+            padding: 6px 0;
+            border-bottom: 1px dashed #eee;
+        }
+        .member-item:last-child { border-bottom: none; }
+        .member-name  { font-weight: bold; font-size: 12px; color: #1a1a2e; }
+        .member-meta  { font-size: 10px; color: #888; margin-top: 1px; }
+
+        /* ── VEHICLE ── */
+        .vehicle-item {
+            display: inline-block;
+            background: #f0f2f5;
+            border-radius: 4px;
+            padding: 3px 8px;
+            margin: 2px 3px 2px 0;
+            font-size: 11px;
+            color: #444;
+        }
+        .vehicle-plate {
+            font-weight: bold;
+            color: #1a1a2e;
+        }
+
+        /* ── HIGHLIGHT ── */
+        .text-red    { color: #c8102e; font-weight: bold; }
+        .text-muted  { color: #999; font-style: italic; }
+        .text-green  { color: #198754; font-weight: bold; }
+
+        /* ── FOOTER ── */
+        .footer {
+            margin-top: 32px;
+            padding-top: 10px;
+            border-top: 1px solid #eee;
+            display: table;
+            width: 100%;
+        }
+        .footer-left  { display: table-cell; font-size: 9px; color: #bbb; vertical-align: bottom; }
+        .footer-right { display: table-cell; text-align: right; font-size: 9px; color: #bbb; vertical-align: bottom; }
     </style>
 </head>
 <body>
 
-    <div class="header-container">
-        <div class="company-name">PT. Charoen Pokphand Indonesia</div>
-        <div class="doc-title">Plant Ngoro - Mojokerto</div>
-        <div class="meta-info">
-            DATA DETAIL PENGUNJUNG | ID: <strong>{{ $visitor->uuid }}</strong>
+{{-- ══ KOP SURAT ══ --}}
+@php
+    $plant       = $visitor->plant ?? null;
+    $plantName   = $plant ? 'Plant ' . $plant->name : 'PT. Charoen Pokphand Indonesia';
+    $plantLoc    = $plant?->location ?? '';
+    $plantLabel  = $plantLoc ? $plantName . ' — ' . $plantLoc : $plantName;
+
+    $statusLabel = !is_null($visitor->checkout_at)
+        ? ['label' => 'Sudah Checkout', 'class' => 'badge-danger']
+        : ($visitor->status == 1
+            ? ['label' => 'Sudah Masuk (Scan)',  'class' => 'badge-success']
+            : ['label' => 'Belum Scan',           'class' => 'badge-warning']);
+@endphp
+
+<div class="kop">
+    <div class="kop-left">
+        <img class="kop-logo" src="{{ public_path('assets/img/logo-cpi.png') }}" alt="CPI">
+    </div>
+    <div class="kop-center">
+        <p class="kop-company">PT. Charoen Pokphand Indonesia</p>
+        <p class="kop-plant">{{ $plantLabel }}</p>
+        <p class="kop-doc">Data Detail Pengunjung</p>
+    </div>
+    <div class="kop-right">
+        <div class="kop-id-label">ID Kunjungan</div>
+        <div class="kop-id-val">{{ substr($visitor->uuid, 0, 18) }}…</div>
+        <div class="kop-date">{{ now()->format('d M Y') }}</div>
+    </div>
+</div>
+
+{{-- ══ STATUS BAR ══ --}}
+<div class="status-bar">
+    <div class="status-bar-left">
+        <p class="visitor-name">{{ $visitor->name }}</p>
+        <p class="visitor-company">{{ $visitor->company_name }}</p>
+    </div>
+    <div class="status-bar-right">
+        <span class="badge {{ $statusLabel['class'] }}">{{ $statusLabel['label'] }}</span>
+    </div>
+</div>
+
+{{-- ══ 2-KOLOM: INFO PRIBADI + DETAIL KUNJUNGAN ══ --}}
+<div class="grid-2">
+    <div class="grid-col">
+        <div class="section">
+            <div class="section-title">Informasi Pribadi</div>
+            <table class="info-table">
+                <tr>
+                    <th>No. Identitas</th>
+                    <td>{{ $visitor->identity_number }}</td>
+                </tr>
+                <tr>
+                    <th>Usia</th>
+                    <td>{{ $visitor->age }} tahun</td>
+                </tr>
+                <tr>
+                    <th>No. Telepon</th>
+                    <td>{{ $visitor->phone_number }}</td>
+                </tr>
+                <tr>
+                    <th>Email</th>
+                    <td>{{ $visitor->email ?? '-' }}</td>
+                </tr>
+                <tr>
+                    <th>Alamat</th>
+                    <td>{{ $visitor->address }}</td>
+                </tr>
+            </table>
         </div>
     </div>
 
-    <div class="section-title">Informasi Pribadi</div>
-    <table>
-        <tr>
-            <th>Nama Lengkap</th>
-            <td><strong>{{ $visitor->name }}</strong></td>
-        </tr>
-        <tr>
-            <th>No. Identitas (KTP/SIM)</th>
-            <td>{{ $visitor->identity_number }}</td>
-        </tr>
-        <tr>
-            <th>Usia</th>
-            <td>{{ $visitor->age }} Tahun</td>
-        </tr>
-        <tr>
-            <th>No. Telepon</th>
-            <td>{{ $visitor->phone_number }}</td>
-        </tr>
-        <tr>
-            <th>Email</th>
-            <td>{{ $visitor->email ?? '-' }}</td>
-        </tr>
-        <tr>
-            <th>Alamat</th>
-            <td>{{ $visitor->address }}</td>
-        </tr>
-        <tr>
-            <th>Perusahaan Asal</th>
-            <td>{{ $visitor->company_name }}</td>
-        </tr>
-    </table>
-
-    <div class="section-title">Detail Kunjungan</div>
-    <table>
-        <tr>
-            <th>Tanggal & Jam Berkunjung</th>
-            <td>{{ $visitor->visit_datetime->format('d F Y') }} <span style="color:#888;">pukul</span> {{ $visitor->visit_datetime->format('H:i') }} WIB</td>
-        </tr>
-        <tr>
-            <th>Tipe Kunjungan</th>
-            <td>{{ $visitor->visit_type }}</td>
-        </tr>
-        <tr>
-            <th>Karyawan yang Dituju</th>
-            <td>{{ $visitor->intended_employee ?? '-' }}</td>
-        </tr>
-        <tr>
-            <th>Keperluan</th>
-            <td>{{ $visitor->purpose }}</td>
-        </tr>
-        <tr>
-            <th>Catatan Keperluan</th>
-            <td>{{ $visitor->purpose_note }}</td>
-        </tr>
-        <tr>
-            <th>Masuk Produksi?</th>
-            <td>
-                {{-- PERBAIKAN LOGIC BLADE & STYLE --}}
-                @if($visitor->is_production)
-                    <span style="color: #d32f2f; font-weight: bold;">
-                        {{-- SVG diganti style inline agar aman di PDF --}}
-                        <svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
-                        </svg>
-                        <span class="icon-text">YA (Area Terbatas)</span>
-                    </span>
-                @else
-                    <span style="color: #6c757d;">
-                        <svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                        </svg>
-                        <span class="icon-text">Tidak / Area Kantor</span>
-                    </span>
+    <div class="grid-col">
+        <div class="section">
+            <div class="section-title">Detail Kunjungan</div>
+            <table class="info-table">
+                <tr>
+                    <th>Tanggal</th>
+                    <td>{{ $visitor->visit_datetime->format('d F Y') }}</td>
+                </tr>
+                <tr>
+                    <th>Pukul</th>
+                    <td>{{ $visitor->visit_datetime->format('H:i') }} WIB</td>
+                </tr>
+                <tr>
+                    <th>Tipe Kunjungan</th>
+                    <td>{{ $visitor->visit_type }}</td>
+                </tr>
+                <tr>
+                    <th>Karyawan Dituju</th>
+                    <td>{{ $visitor->intended_employee ?? '-' }}</td>
+                </tr>
+                <tr>
+                    <th>Keperluan</th>
+                    <td>{{ $visitor->purpose }}</td>
+                </tr>
+                @if($visitor->purpose_note)
+                <tr>
+                    <th>Catatan</th>
+                    <td>{{ $visitor->purpose_note }}</td>
+                </tr>
                 @endif
-            </td>
-        </tr>
-        <tr>
-            <th>Kategori Khusus</th>
-            <td>{{ $visitor->special_category ?? '-' }}</td>
-        </tr>
-        <tr>
-            <th>Kebutuhan Khusus</th>
-            <td>{{ $visitor->special_needs ?? '-' }}</td>
-        </tr>
-        <tr>
-            <th>Akses Internet</th>
-            <td>{{ $visitor->internet ? 'Ya (Diperbolehkan)' : 'Tidak' }}</td>
-        </tr>
-    </table>
-
-    <div class="section-title">Status & Waktu</div>
-    <table>
-        <tr>
-            <th>Status Saat Ini</th>
-            <td>
-                {{-- LOGIKA BARU: Cek Checkout dulu, baru cek Status Scan --}}
-                @if(!is_null($visitor->checkout_at))
-                    <span class="badge badge-danger">Sudah Checkout (Keluar)</span>
-                @elseif($visitor->status == 1)
-                    <span class="badge badge-success">Sudah Scan (Masuk)</span>
-                @else
-                    <span class="badge badge-warning">Belum Scan</span>
-                @endif
-            </td>
-        </tr>
-        <tr>
-            <th>Waktu Dibuat</th>
-            <td>{{ $visitor->created_at->format('d/m/Y H:i:s') }}</td>
-        </tr>
-        <tr>
-            <th>Waktu Checkout</th>
-            <td>
-                @if($visitor->checkout_at)
-                    {{ $visitor->checkout_at->format('d/m/Y H:i:s') }}
-                @else
-                    <span style="color:#999; font-style:italic;">Belum melakukan checkout</span>
-                @endif
-            </td>
-        </tr>
-    </table>
-
-    <div class="section-title">Kendaraan & Rombongan</div>
-    <table>
-        <tr>
-            <th>Tipe Grup</th>
-            <td>{{ $visitor->group_type }}</td>
-        </tr>
-        <tr>
-            <th>Kendaraan</th>
-            <td>
-                @if(!empty($visitor->vehicles) && count($visitor->vehicles) > 0)
-                    <ul class="custom-list">
-                    @foreach($visitor->vehicles as $vehicle)
-                        <li>
-                            <strong>{{ $vehicle['type'] ?? 'Kendaraan' }}</strong> 
-                            — Plat: {{ $vehicle['number'] ?? '-' }}
-                        </li>
-                    @endforeach
-                    </ul>
-                @else
-                    <span style="color:#888;">Tidak membawa kendaraan</span>
-                @endif
-            </td>
-        </tr>
-        
-        @if(!empty($visitor->group_members) && count($visitor->group_members) > 0)
-        <tr>
-            <th>Anggota Rombongan ({{ count($visitor->group_members) }} Orang)</th>
-            <td>
-                <ol class="custom-list">
-                @foreach($visitor->group_members as $member)
-                    <li class="member-item">
-                        @if(is_array($member))
-                            <div class="member-name">{{ $member['name'] ?? '-' }}</div>
-                            <div class="member-detail">
-                                ID: {{ $member['id'] ?? '-' }} &nbsp;|&nbsp; 
-                                Usia: {{ $member['age'] ?? '-' }} thn &nbsp;|&nbsp; 
-                                HP: {{ $member['phone'] ?? '-' }}
-                            </div>
-                        @else
-                            <div class="member-name">{{ $member }}</div>
-                        @endif
-                    </li>
-                @endforeach
-                </ol>
-            </td>
-        </tr>
-        @endif
-
-        <tr>
-            <th>Kontak Darurat</th>
-            <td>{{ $visitor->phone_number_emrg }}</td>
-        </tr>
-    </table>
-    <div class="section-title">Status & Log Petugas</div>
-    <table>
-        <tr>
-            <th>Check-in (Scan)</th>
-            <td>
-                @if($visitor->status == 1)
-                    <strong>{{ $visitor->scanner->name ?? '-' }}</strong> 
-                    <span style="color:#888; font-size: 11px;">— {{ $visitor->updated_at->format('d/m/Y H:i') }} WIB</span>
-                @else
-                    <span style="color:#999; font-style:italic;">Belum masuk</span>
-                @endif
-            </td>
-        </tr>
-        <tr>
-            <th>Check-out</th>
-            <td>
-                @if($visitor->checkout_at)
-                    <strong>{{ $visitor->checkouter->name ?? '-' }}</strong> 
-                    <span style="color:#888; font-size: 11px;">— {{ \Carbon\Carbon::parse($visitor->checkout_at)->format('d/m/Y H:i') }} WIB</span>
-                @else
-                    <span style="color:#999; font-style:italic;">Belum keluar</span>
-                @endif
-            </td>
-        </tr>
-        <tr>
-            <th>Waktu Pendaftaran</th>
-            <td>{{ $visitor->created_at->format('d/m/Y H:i') }} WIB</td>
-        </tr>
-    </table>
-
-    <div class="footer">
-        Dicetak otomatis oleh Sistem PGA Digital pada {{ date('d F Y H:i') }} WIB
+            </table>
+        </div>
     </div>
+</div>
+
+{{-- ══ BARIS 2: AKSES & KENDARAAN ══ --}}
+<div class="grid-2">
+    <div class="grid-col">
+        <div class="section">
+            <div class="section-title">Akses & Kategori</div>
+            <table class="info-table">
+                <tr>
+                    <th>Masuk Produksi</th>
+                    <td>
+                        @if($visitor->is_production)
+                            <span class="text-red">YA - Area Terbatas</span>
+                        @else
+                            <span class="text-green">Tidak - Area Kantor</span>
+                        @endif
+                    </td>
+                </tr>
+                <tr>
+                    <th>Tipe Grup</th>
+                    <td>{{ $visitor->group_type }}</td>
+                </tr>
+                @if($visitor->special_category)
+                <tr>
+                    <th>Kategori Khusus</th>
+                    <td>{{ $visitor->special_category }}</td>
+                </tr>
+                @endif
+                @if($visitor->special_needs)
+                <tr>
+                    <th>Kebutuhan Khusus</th>
+                    <td>{{ $visitor->special_needs }}</td>
+                </tr>
+                @endif
+            </table>
+        </div>
+    </div>
+
+    <div class="grid-col">
+        <div class="section">
+            <div class="section-title">Log Petugas</div>
+            <table class="info-table">
+                <tr>
+                    <th>Pendaftaran</th>
+                    <td>{{ $visitor->created_at->format('d/m/Y H:i') }} WIB</td>
+                </tr>
+                <tr>
+                    <th>Check-in</th>
+                    <td>
+                        @if($visitor->status == 1)
+                            {{ $visitor->scanner->name ?? '-' }}<br>
+                            <span style="font-size:10px;color:#888">{{ $visitor->updated_at->format('d/m/Y H:i') }} WIB</span>
+                        @else
+                            <span class="text-muted">Belum masuk</span>
+                        @endif
+                    </td>
+                </tr>
+                <tr>
+                    <th>Check-out</th>
+                    <td>
+                        @if($visitor->checkout_at)
+                            {{ $visitor->checkouter->name ?? '-' }}<br>
+                            <span style="font-size:10px;color:#888">{{ \Carbon\Carbon::parse($visitor->checkout_at)->format('d/m/Y H:i') }} WIB</span>
+                        @else
+                            <span class="text-muted">Belum keluar</span>
+                        @endif
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+</div>
+
+{{-- ══ KENDARAAN ══ --}}
+@if(!empty($visitor->vehicles) && count($visitor->vehicles) > 0)
+<div class="section">
+    <div class="section-title">Kendaraan</div>
+    @foreach($visitor->vehicles as $v)
+        <span class="vehicle-item">
+            {{ $v['type'] ?? 'Kendaraan' }} — <span class="vehicle-plate">{{ $v['number'] ?? '-' }}</span>
+        </span>
+    @endforeach
+</div>
+@endif
+
+{{-- ══ ANGGOTA ROMBONGAN ══ --}}
+@if(!empty($visitor->group_members) && count($visitor->group_members) > 0)
+<div class="section">
+    <div class="section-title">Anggota Rombongan ({{ count($visitor->group_members) }} orang)</div>
+    @foreach($visitor->group_members as $i => $m)
+    <div class="member-item">
+        <div class="member-name">{{ ($i+1) }}. {{ is_array($m) ? ($m['name'] ?? '-') : $m }}</div>
+        @if(is_array($m))
+        <div class="member-meta">
+            ID: {{ $m['id'] ?? '-' }} &nbsp;·&nbsp;
+            Usia: {{ $m['age'] ?? '-' }} thn &nbsp;·&nbsp;
+            HP: {{ $m['phone'] ?? '-' }}
+        </div>
+        @endif
+    </div>
+    @endforeach
+</div>
+@endif
+
+{{-- ══ FOOTER ══ --}}
+<div class="footer">
+    <div class="footer-left">
+        ID: {{ $visitor->uuid }}
+    </div>
+    <div class="footer-right">
+        Dicetak otomatis · Sistem PGA Management System · {{ now()->format('d F Y, H:i') }} WIB
+    </div>
+</div>
 
 </body>
 </html>
