@@ -11,6 +11,7 @@ class ReservasiLog extends Model
 
     protected $fillable = [
         'user_uuid',   // <--- Tambahkan ini agar tidak error MassAssignment
+        'plant_uuid',
         'ip_address', 
         'url', 
         'method',
@@ -25,5 +26,10 @@ class ReservasiLog extends Model
     public function user()
     {
         return $this->belongsTo(User::class, 'user_uuid', 'uuid');
+    }
+
+    public function plant()
+    {
+        return $this->belongsTo(Plant::class, 'plant_uuid', 'uuid');
     }
 }

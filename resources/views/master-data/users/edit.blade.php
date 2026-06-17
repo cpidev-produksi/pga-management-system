@@ -66,9 +66,10 @@
                             <select name="role_uuid" id="role_uuid" required
                                 class="w-full pl-4 pr-10 py-3 border rounded-lg focus:ring-2 focus:ring-indigo-500 border-gray-300 bg-white @error('role_uuid') border-red-500 @enderror">
                                 <option value="" disabled>-- Pilih Role --</option>
+                                @php($currentRoleUuid = old('role_uuid', optional($user->roles->first())->uuid))
                                 @foreach($roles as $role)
-                                    <option value="{{ $role->uuid }}" 
-                                        {{ old('role_uuid', $user->role_uuid) == $role->uuid ? 'selected' : '' }}>
+                                    <option value="{{ $role->uuid }}" data-super="{{ $role->name === 'Super Admin' ? '1' : '0' }}"
+                                        {{ $currentRoleUuid == $role->uuid ? 'selected' : '' }}>
                                         {{ $role->name }}
                                     </option>
                                 @endforeach
@@ -102,6 +103,32 @@
                             </div>
                         </div>
                         @error('department_uuid')
+                            <p class="mt-1 text-sm text-red-500">{{ $message }}</p>
+                        @enderror
+                    </div>
+
+                    {{-- PLANT: menentukan plant tujuan akun saat login --}}
+                    <div class="col-span-1 md:col-span-2" id="plant-field-wrapper">
+                        <label for="plant_uuid" class="block text-sm font-semibold text-gray-700 mb-2">
+                            Plant <span class="text-red-500">*</span>
+                        </label>
+                        <div class="relative">
+                            <select name="plant_uuid" id="plant_uuid"
+                                class="w-full pl-4 pr-10 py-3 border rounded-lg focus:ring-2 focus:ring-indigo-500 border-gray-300 bg-white @error('plant_uuid') border-red-500 @enderror">
+                                <option value="">-- Pilih Plant --</option>
+                                @foreach($plants as $plant)
+                                    <option value="{{ $plant->uuid }}"
+                                        {{ old('plant_uuid', $user->plant_uuid) == $plant->uuid ? 'selected' : '' }}>
+                                        {{ $plant->name }} ({{ $plant->code }})
+                                    </option>
+                                @endforeach
+                            </select>
+                            <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-gray-500">
+                                <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                            </div>
+                        </div>
+                        <p id="plant-help" class="mt-1 text-xs text-gray-400">Akun akan langsung masuk ke plant ini saat login. Super Admin tidak perlu plant.</p>
+                        @error('plant_uuid')
                             <p class="mt-1 text-sm text-red-500">{{ $message }}</p>
                         @enderror
                     </div>
@@ -215,4 +242,29 @@
         </form>
     </div>
 </div>
+
+<script>
+    (function () {
+        const role = document.getElementById('role_uuid');
+        const plantSel = document.getElementById('plant_uuid');
+        const wrapper = document.getElementById('plant-field-wrapper');
+        const help = document.getElementById('plant-help');
+        if (!role || !plantSel) return;
+
+        function sync() {
+            const opt = role.options[role.selectedIndex];
+            const isSuper = opt && opt.dataset.super === '1';
+            plantSel.disabled = isSuper;
+            if (wrapper) wrapper.style.opacity = isSuper ? '0.5' : '1';
+            if (isSuper) {
+                plantSel.value = '';
+                if (help) help.textContent = 'Super Admin lintas plant — plant tidak diperlukan.';
+            } else if (help) {
+                help.textContent = 'Akun akan langsung masuk ke plant ini saat login.';
+            }
+        }
+        role.addEventListener('change', sync);
+        sync();
+    })();
+</script>
 @endsection

@@ -15,9 +15,8 @@ class DatabaseSeeder extends Seeder
         // PENTING: Role harus dibuat duluan sebelum User!
         $this->call([
             RolePermissionSeeder::class,      // 1. Buat Role (Admin & User)
-            UserSeeder::class,       // 3. Baru buat User
+            PlantsSeeder::class,              // 2. Buat Plant (SLT, SRG)
+            UserSeeder::class,                // 3. Baru buat User
         ]);
     }
-
-
 }

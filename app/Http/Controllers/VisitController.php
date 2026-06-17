@@ -31,17 +31,37 @@ class VisitController extends Controller
 
     /**
      * Menampilkan halaman formulir reservasi.
+     * Plant dipilih di dalam halaman (single link /reservasi).
      */
     public function create()
     {
-        return view('reservasi.form'); 
+        $plants = \App\Models\Plant::where('is_active', true)->orderBy('name')->get();
+
+        return view('guest.VisitView', compact('plants'));
     }
 
     /**
      * Menyimpan data reservasi baru dari form.
+     * Plant ditentukan oleh pilihan pengunjung di halaman (field plant_uuid).
      */
     public function store(Request $request)
     {
+        // Validasi & resolusi plant yang dipilih dari dalam halaman.
+        $request->validate([
+            'plant_uuid' => 'required|string|exists:plants,uuid',
+        ], [
+            'plant_uuid.required' => 'Silakan pilih plant tujuan terlebih dahulu.',
+            'plant_uuid.exists'   => 'Plant yang dipilih tidak valid.',
+        ]);
+
+        $plant = \App\Models\Plant::where('uuid', $request->input('plant_uuid'))
+            ->where('is_active', true)
+            ->first();
+
+        if (! $plant) {
+            return back()->withInput()
+                ->withErrors(['plant_uuid' => 'Plant yang dipilih tidak aktif atau tidak ditemukan.']);
+        }
         // 1. VALIDASI
         $validatedData = $request->validate([
             'visitor_type'      => 'required|string',
@@ -116,6 +136,7 @@ class VisitController extends Controller
             DB::beginTransaction(); // Mulai transaksi
 
             $visitor = Visitor::create([
+                'plant_uuid'        => $plant->uuid,
                 'visit_type'        => $validatedData['visitor_type'],
                 'identity_number'   => $validatedData['id_card'],
                 'name'              => $validatedData['name'],
@@ -166,10 +187,14 @@ class VisitController extends Controller
         }
     }
 
-    public function success($uuid)
+    public function success($uuid, \App\Services\QrCodeService $qr)
     {
         $visitor = Visitor::where('uuid', $uuid)->firstOrFail();
-        return view('guest.success', compact('visitor'));
+
+        // Payload QR ber-signature (plant + uuid + signature)
+        $qrPayload = $qr->generatePayload($visitor);
+
+        return view('guest.success', compact('visitor', 'qrPayload'));
     }
 
     public function edit($uuid)

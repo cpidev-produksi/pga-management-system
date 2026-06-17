@@ -92,6 +92,7 @@
                         <th scope="col" class="px-6 py-4 font-bold tracking-wider">Email</th>
                         <th scope="col" class="px-6 py-4 font-bold tracking-wider">Role</th>
                         <th scope="col" class="px-6 py-4 font-bold tracking-wider text-center">Departemen</th>
+                        <th scope="col" class="px-6 py-4 font-bold tracking-wider text-center">Plant</th>
                         <th scope="col" class="px-6 py-4 font-bold tracking-wider text-center">Status</th>
                         <th scope="col" class="px-6 py-4 font-bold tracking-wider text-center">Aksi</th>
                     </tr>
@@ -137,6 +138,16 @@
                         </td>
 
                         <td class="px-6 py-4 whitespace-nowrap text-center">
+                            @if($user->is_super_admin)
+                                <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-semibold bg-purple-100 text-purple-800">Semua Plant</span>
+                            @elseif($user->plant)
+                                <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-semibold bg-blue-100 text-blue-800">{{ $user->plant->name }}</span>
+                            @else
+                                <span class="text-gray-400 text-xs italic">- Belum diset -</span>
+                            @endif
+                        </td>
+
+                        <td class="px-6 py-4 whitespace-nowrap text-center">
                              @if($user->is_contactable)
                                 <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-green-100 text-green-800">
                                     <svg class="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg>
@@ -171,7 +182,7 @@
                     </tr>
                     @empty
                     <tr>
-                        <td colspan="6" class="px-6 py-12 text-center text-gray-500">
+                        <td colspan="7" class="px-6 py-12 text-center text-gray-500">
                             <div class="flex flex-col items-center justify-center">
                                 <svg class="w-12 h-12 text-gray-300 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"></path></svg>
                                 <p class="text-base font-medium">Tidak ada data ditemukan</p>

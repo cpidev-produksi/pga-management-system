@@ -2,15 +2,17 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\User;
-use App\Models\Role;
-use App\Models\Department;
-use Illuminate\Http\Request;
-use Illuminate\Validation\Rules;
-use Illuminate\Validation\Rule;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Mail;
 use App\Mail\UserCreatedMail;
+use App\Models\Department;
+use App\Models\Role;
+use App\Models\User;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Validation\Rule;
+use Illuminate\Validation\Rules;
 
 class UserController extends Controller
 {
@@ -20,7 +22,7 @@ class UserController extends Controller
         $search = $request->input('search');
 
         // PERBAIKAN: Gunakan 'roles' (jamak) bawaan Spatie, bukan 'role'
-        $users = User::with(['roles', 'department'])
+        $users = User::with(['roles', 'department', 'plant'])
             ->when($search, function ($query, $search) {
                 return $query->where('name', 'like', "%{$search}%")
                              ->orWhere('email', 'like', "%{$search}%");
@@ -36,38 +38,44 @@ class UserController extends Controller
     {
         $roles = Role::all();
         $departments = Department::all();
-        
-        return view('master-data.users.create', compact('roles', 'departments'));
+        $plants = \App\Models\Plant::where('is_active', true)->orderBy('name')->get();
+
+        return view('master-data.users.create', compact('roles', 'departments', 'plants'));
     }
 
     public function store(Request $request)
     {
+        // Tentukan apakah role yang dipilih adalah Super Admin
+        $role = Role::where('uuid', $request->role_uuid)->first();
+        $isSuperAdmin = $role && $role->name === 'Super Admin';
+
         // 1. VALIDASI
         $request->validate([
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email'],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
             'department_uuid' => ['nullable', 'exists:departments,uuid'],
-            
-            // Validasi Role tetap diperlukan untuk memastikan inputnya benar
             'role_uuid' => ['required', 'exists:roles,uuid'],
+
+            // Plant WAJIB untuk semua role kecuali Super Admin (lintas plant)
+            'plant_uuid' => [Rule::requiredIf(! $isSuperAdmin), 'nullable', 'exists:plants,uuid'],
+        ], [
+            'plant_uuid.required' => 'Plant wajib dipilih untuk role selain Super Admin.',
         ]);
 
         // 2. SIMPAN DATA USER
-        // PERBAIKAN: JANGAN masukkan role_uuid di sini (Kolomnya sudah tidak ada)
-        // Model User akan otomatis memberi role 'User' saat created (sesuai setup Model sebelumnya)
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
-            'password' => Hash::make($request->password), 
+            'password' => Hash::make($request->password),
             'is_contactable' => $request->boolean('is_contactable'),
             'department_uuid' => $request->department_uuid,
+            // Super Admin tidak terikat plant; role lain wajib punya plant
+            'plant_uuid' => $isSuperAdmin ? null : $request->plant_uuid,
+            'is_super_admin' => $isSuperAdmin,
         ]);
 
         // 3. ASSIGN ROLE PILIHAN ADMIN
-        // Kita cari role berdasarkan UUID dari form, lalu kita TIMPA role default 'User'
-        $role = Role::where('uuid', $request->role_uuid)->first();
-        
         if ($role) {
             // syncRoles akan menghapus role 'User' (default) dan menggantinya dengan pilihan Admin
             $user->syncRoles([$role->name]);
@@ -76,7 +84,7 @@ class UserController extends Controller
         Mail::to($user->email)->send(new UserCreatedMail($user, $request->password));
         } catch (\Exception $e) {
             // Log error silent agar user tidak terganggu jika email gagal
-            \Log::error('Gagal kirim email: ' . $e->getMessage());
+            Log::error('Gagal kirim email: ' . $e->getMessage());
         }
 
         return redirect()->route('users.index')->with('success', 'User berhasil ditambahkan!');
@@ -86,11 +94,17 @@ class UserController extends Controller
     {
         $roles = Role::all();
         $departments = Department::all();
-        return view('master-data.users.edit', compact('user', 'roles', 'departments'));
+        $plants = \App\Models\Plant::where('is_active', true)->orderBy('name')->get();
+
+        return view('master-data.users.edit', compact('user', 'roles', 'departments', 'plants'));
     }
 
     public function update(Request $request, User $user)
     {
+        // Tentukan apakah role yang dipilih adalah Super Admin
+        $role = Role::where('uuid', $request->role_uuid)->first();
+        $isSuperAdmin = $role && $role->name === 'Super Admin';
+
         // 1. VALIDASI UPDATE
         $request->validate([
             'name' => ['required', 'string', 'max:255'],
@@ -101,6 +115,9 @@ class UserController extends Controller
             'password' => ['nullable', 'confirmed', Rules\Password::defaults()],
             'department_uuid' => ['nullable', 'exists:departments,uuid'],
             'role_uuid' => ['required', 'exists:roles,uuid'],
+            'plant_uuid' => [Rule::requiredIf(! $isSuperAdmin), 'nullable', 'exists:plants,uuid'],
+        ], [
+            'plant_uuid.required' => 'Plant wajib dipilih untuk role selain Super Admin.',
         ]);
 
         // 2. SUSUN DATA UPDATE
@@ -109,7 +126,8 @@ class UserController extends Controller
             'email' => $request->email,
             'is_contactable' => $request->boolean('is_contactable'),
             'department_uuid' => $request->department_uuid,
-            // PERBAIKAN: role_uuid DIHAPUS dari sini
+            'plant_uuid' => $isSuperAdmin ? null : $request->plant_uuid,
+            'is_super_admin' => $isSuperAdmin,
         ];
 
         if ($request->filled('password')) {
@@ -120,9 +138,6 @@ class UserController extends Controller
         $user->update($userData);
 
         // 3. UPDATE ROLE VIA SPATIE
-        // Cari role baru, lalu sync
-        $role = Role::where('uuid', $request->role_uuid)->first();
-        
         if ($role) {
             $user->syncRoles([$role->name]);
         }
@@ -132,7 +147,7 @@ class UserController extends Controller
 
     public function destroy(User $user)
     {
-        if (auth()->user()->uuid == $user->uuid) {
+        if (Auth::user()->uuid == $user->uuid) {
             return back()->with('error', 'Anda tidak bisa menghapus akun sendiri!');
         }
 
@@ -144,7 +159,7 @@ class UserController extends Controller
     public function trash()
     {
         // PERBAIKAN: Gunakan 'roles' (jamak)
-        $users = User::onlyTrashed()->with(['roles', 'department'])->latest()->paginate(10);
+        $users = User::onlyTrashed()->with(['roles', 'department', 'plant'])->latest()->paginate(10);
         return view('master-data.users.trash', compact('users'));
     }
 

@@ -105,6 +105,12 @@ class DashboardController extends Controller
             ->join('departments', 'users.department_uuid', '=', 'departments.uuid')
             ->select('departments.name', DB::raw('count(visitors.id) as total'));
 
+        // ISOLASI PLANT: query mentah ini tidak melewati global scope Eloquent,
+        // jadi filter plant aktif harus ditambahkan manual agar data tidak bocor antar-plant.
+        if ($activePlantUuid = session('current_plant_uuid')) {
+            $deptQuery->where('visitors.plant_uuid', $activePlantUuid);
+        }
+
         // Filter Dept sesuai periode
         if ($period == 'yearly') {
             $deptQuery->whereYear('visitors.visit_datetime', $selectedYear);
@@ -220,62 +226,72 @@ class DashboardController extends Controller
     }
 
     /**
-     * Memproses hasil pemindaian QR dan mengembalikan respons JSON.
+     * Memproses hasil pemindaian QR (payload ber-signature) dan mengembalikan JSON.
+     *
+     * Payload QR: {PLANT_CODE}.{VISITOR_UUID}.{SIGNATURE} (lihat QrCodeService).
+     * Aturan: user biasa hanya boleh scan QR plant-nya sendiri.
      */
-    public function scanVisitor($uuid): JsonResponse 
+    public function scanVisitor(Request $request, \App\Services\QrCodeService $qr): JsonResponse
     {
-        // 1. Cari data visitor
-        $visitor = Visitor::where('uuid', $uuid)->first();
+        $payload = (string) $request->input('payload', $request->input('qr', ''));
 
-        if (!$visitor) {
+        // 1. Verifikasi format + signature + resolusi plant/visitor.
+        try {
+            $result = $qr->verify($payload);
+        } catch (\App\Services\InvalidQrException $e) {
             return response()->json([
-                'status' => 'error',
-                'message' => 'QR Code tidak dikenali / Data tidak ditemukan.'
-            ], 404);
+                'status'  => 'error',
+                'message' => '⛔ ' . $e->getMessage(),
+            ], 422);
         }
 
-        // 3. Setup Tanggal
-        Carbon::setLocale('id'); 
-        $visitDate = Carbon::parse($visitor->visit_datetime)->startOfDay();
-        $today = Carbon::today(); 
+        /** @var \App\Models\Plant $plant */
+        $plant = $result['plant'];
+        /** @var \App\Models\Visitor $visitor */
+        $visitor = $result['visitor'];
 
-        // Validasi Tanggal
-        // if ($visitDate->gt($today)) {
-        //     return response()->json([
-        //         'status' => 'error',
-        //         'message' => '⛔ Anda belum bisa scan. Tanggal reservasi Anda adalah ' . $visitDate->translatedFormat('d F Y') . '.'
-        //     ]);
-        // }
+        // 2. ISOLASI PLANT: pastikan scanner hanya memproses QR plant-nya.
+        $user = Auth::user();
 
-        // if ($visitDate->lt($today)) {
-        //     return response()->json([
-        //         'status' => 'error',
-        //         'message' => '⛔ QR Code kadaluarsa (Tgl: ' . $visitDate->translatedFormat('d F Y') . '). Silahkan reservasi kembali.'
-        //     ]);
-        // }
+        if (! $user->is_super_admin) {
+            if ($user->plant_uuid !== $plant->uuid) {
+                return response()->json([
+                    'status'  => 'error',
+                    'message' => "⛔ QR ini milik plant {$plant->name}, bukan plant Anda.",
+                ], 403);
+            }
+        } else {
+            // Super admin yang sedang menyelami satu plant: batasi ke plant itu.
+            $active = session('current_plant_uuid');
+            if ($active && $active !== $plant->uuid) {
+                return response()->json([
+                    'status'  => 'error',
+                    'message' => "⛔ QR ini milik plant {$plant->name}. Beralih ke plant tersebut untuk men-scan.",
+                ], 403);
+            }
+        }
 
-        // Cek Status (Sudah scan atau belum)
+        // 3. Cek apakah sudah pernah scan.
+        Carbon::setLocale('id');
         if ($visitor->status) {
-             $lastScan = Carbon::parse($visitor->updated_at);
-             $dateStr = $lastScan->translatedFormat('d F Y'); 
-             $timeStr = $lastScan->format('H:i');             
+            $lastScan = Carbon::parse($visitor->updated_at);
 
-             return response()->json([
-                'status' => 'warning',
-                'message' => "⚠️ Pengunjung a.n {$visitor->name} sudah melakukan scan sebelumnya pada tanggal {$dateStr} pukul {$timeStr}."
+            return response()->json([
+                'status'  => 'warning',
+                'message' => "⚠️ Pengunjung a.n {$visitor->name} sudah melakukan scan sebelumnya pada tanggal "
+                    . $lastScan->translatedFormat('d F Y') . " pukul " . $lastScan->format('H:i') . ".",
             ]);
         }
 
-        // UPDATE STATUS
-        // Pastikan 'status' ada di $fillable Model Visitor!
-        $visitor->status = true; 
-        $visitor->scan_by = Auth::user()->uuid;
-        $visitor->save(); // Cara alternatif update yang lebih aman dibanding ->update([])
-        
+        // 4. Update status check-in.
+        $visitor->status = true;
+        $visitor->scan_by = $user->uuid;
+        $visitor->save();
+
         return response()->json([
-            'status' => 'success',
+            'status'  => 'success',
             'message' => '✅ Check-in Berhasil! Selamat datang, ' . $visitor->name . '.',
-            'uuid' => $visitor->uuid,
+            'uuid'    => $visitor->uuid,
         ]);
     }
 

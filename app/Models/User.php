@@ -29,6 +29,8 @@ class User extends Authenticatable
         'password',
         'is_contactable',       
         'department_uuid',
+        'plant_uuid',
+        'is_super_admin',
         // 'role_uuid' <-- JANGAN ADA DISINI LAGI
     ];
 
@@ -42,6 +44,7 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'is_super_admin' => 'boolean',
         ];
     }
     
@@ -78,18 +81,35 @@ class User extends Authenticatable
             }
         });
     }
-    
-    // =========================================================
-    // RELASI
-    // =========================================================
 
-    // Relasi ke Department (Invers)
     public function department()
     {
         return $this->belongsTo(Department::class, 'department_uuid', 'uuid');
     }
 
-    // PENTING: Function role() SAYA HAPUS.
-    // Karena Spatie sudah menyediakan $user->roles() lewat trait HasRoles.
-    // Jika Anda membiarkan function role() manual tadi, akan error karena kolom 'role_uuid' sudah tidak ada.
+    public function plant()
+    {
+        return $this->belongsTo(Plant::class, 'plant_uuid', 'uuid');
+    }
+
+    public function isSuperAdmin(): bool
+    {
+        return $this->is_super_admin === true;
+    }
+
+    public function canAccessPlant(string $plantUuid): bool
+    {
+        if ($this->is_super_admin) {
+            return true;
+        }
+        return $this->plant_uuid === $plantUuid;
+    }
+
+    public function getPlantName(): string
+    {
+        if ($this->is_super_admin) {
+            return 'All Plants';
+        }
+        return $this->plant?->name ?? 'Unknown Plant';
+    }
 }

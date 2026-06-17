@@ -61,7 +61,7 @@
                 <div id="qr-overlay-container" class="relative inline-block p-5 bg-white rounded-2xl border-2 border-dashed border-slate-200">
                     
                     {{-- QR Code Layer --}}
-                    {!! QrCode::size(220)->errorCorrection('H')->margin(1)->color(30, 41, 59)->generate($visitor->uuid ?? 'test-uuid') !!}
+                    {!! QrCode::size(220)->errorCorrection('H')->margin(1)->color(30, 41, 59)->generate($qrPayload ?? ($visitor->uuid ?? 'test-uuid')) !!}
 
                     {{-- Logo Layer --}}
                     <img id="company-logo" 

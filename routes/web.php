@@ -12,6 +12,7 @@ use App\Http\Controllers\LoginActivityController;
 use App\Http\Middleware\LogReservasiVisit;
 use App\Http\Controllers\ReservasiLogController;
 use App\Http\Controllers\Auth\PasswordController;
+use App\Http\Controllers\PlantController;
 
 /*
 |--------------------------------------------------------------------------
@@ -23,13 +24,20 @@ Route::get('/', fn () => redirect('/login'));
 
 /*
 |--------------------------------------------------------------------------
-| 2. Public Routes
+| 2. Public Routes (Reservasi per-plant via link, mis. /reservasi/SLT)
 |--------------------------------------------------------------------------
 */
+// Route spesifik (kata kunci tetap) didefinisikan SEBELUM route dinamis {plant:code}
 Route::get('/reservasi/reschedule/{uuid}', [VisitController::class, 'edit'])->name('reservasi.edit');
 Route::put('/reservasi/update/{uuid}', [VisitController::class, 'update'])->name('reservasi.update');
-Route::resource('reservasi', VisitController::class)->middleware(LogReservasiVisit::class);
 Route::get('/reservasi/sukses/{uuid}', [VisitController::class, 'success'])->name('reservasi.success');
+
+// Form & submit reservasi (single link; plant dipilih di dalam halaman)
+Route::get('/reservasi', [VisitController::class, 'create'])
+    ->middleware(LogReservasiVisit::class)
+    ->name('reservasi.create');
+Route::post('/reservasi', [VisitController::class, 'store'])->name('reservasi.store');
+
 Route::get('/offline', fn () => view('offline'));
 
 
@@ -47,6 +55,25 @@ require __DIR__.'/auth.php';
 |--------------------------------------------------------------------------
 */
 Route::middleware(['auth'])->group(function () {
+
+    // ================= Plant Selector & Management (Super Admin) =================
+    // Halaman pemilih plant (dibuka setelah super admin login)
+    Route::get('/plants/select', [PlantController::class, 'select'])
+        ->middleware('super.admin')->name('plants.select');
+
+    Route::middleware('super.admin')->group(function () {
+        // Perpindahan konteks plant
+        Route::post('/plants/all', [PlantController::class, 'allPlants'])->name('plants.all');
+        Route::post('/plants/{plant}/switch', [PlantController::class, 'switch'])->name('plants.switch');
+
+        // CRUD pengelolaan plant (route statis sebelum route dinamis {plant})
+        Route::get('/plants', [PlantController::class, 'index'])->name('plants.index');
+        Route::get('/plants/create', [PlantController::class, 'create'])->name('plants.create');
+        Route::post('/plants', [PlantController::class, 'store'])->name('plants.store');
+        Route::get('/plants/{plant}/edit', [PlantController::class, 'edit'])->name('plants.edit');
+        Route::put('/plants/{plant}', [PlantController::class, 'update'])->name('plants.update');
+        Route::delete('/plants/{plant}', [PlantController::class, 'destroy'])->name('plants.destroy');
+    });
 
     // ================= Dashboard & Main Features =================
     Route::get('/dashboard/details/today', [DashboardController::class, 'detailTotalToday'])->name('dashboard.detail.today');
@@ -68,7 +95,7 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/{uuid}/export-pdf', [DataVisitorController::class, 'exportPdf'])->name('visitors.export_pdf');
         
         Route::get('/{uuid}', [DataVisitorController::class, 'show'])->name('visitors.show');
-        Route::post('/{uuid}/scan', [DashboardController::class, 'scanVisitor'])->name('visitors.scan');
+        Route::post('/scan', [DashboardController::class, 'scanVisitor'])->name('visitors.scan');
         Route::post('/{uuid}/checkout', [DataVisitorController::class, 'checkout'])->name('visitors.checkout');
     });
     

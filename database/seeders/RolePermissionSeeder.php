@@ -29,6 +29,9 @@ class RolePermissionSeeder extends Seeder
         }
 
         // 3. Role Admin (Full Akses)
+        $saRole = Role::firstOrCreate(['name' => 'Super Admin']);
+        $saRole->givePermissionTo(Permission::all());
+
         $adminRole = Role::firstOrCreate(['name' => 'Admin']);
         $adminRole->givePermissionTo(Permission::all());
 

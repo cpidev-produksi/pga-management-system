@@ -223,7 +223,7 @@
             feedbackFn('Memeriksa data...', 'loading');
 
             const cleaned = (uuid || '').trim();
-            const actionUrl = `{{ url('visitors') }}/${cleaned}/scan`;
+            const actionUrl = `{{ route('visitors.scan') }}`;
             const csrfToken = '{{ csrf_token() }}';
 
             fetch(actionUrl, {
@@ -231,7 +231,8 @@
                 headers: {
                     'Content-Type': 'application/json',
                     'X-CSRF-TOKEN': csrfToken
-                }
+                },
+                body: JSON.stringify({ payload: cleaned })
             })
             .then(async (response) => {
                 // Aman untuk kasus error non-JSON

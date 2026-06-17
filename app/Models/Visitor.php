@@ -2,9 +2,11 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Str; // Import class Str untuk menggunakan UUID
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Str;
 
 class Visitor extends Model
 {
@@ -17,6 +19,7 @@ class Visitor extends Model
      */
     protected $fillable = [
         'uuid',
+        'plant_uuid',
         'visit_type',
         'identity_number',
         'name',
@@ -59,16 +62,34 @@ class Visitor extends Model
         'is_production' => 'boolean',
     ];
 
-    /**
-     * Boot method untuk model.
-     * Akan otomatis mengisi UUID saat data baru dibuat.
-     */
     protected static function booted(): void
     {
+        parent::booted();
+
         static::creating(function ($model) {
-            // Jika uuid belum diisi, buatkan yang baru
             if (empty($model->uuid)) {
                 $model->uuid = (string) Str::uuid();
+            }
+
+            // Auto-isi plant_uuid dari plant aktif bila belum di-set
+            // (reservasi publik mengisi ini secara eksplisit dari link plant).
+            if (empty($model->plant_uuid) && session('current_plant_uuid')) {
+                $model->plant_uuid = session('current_plant_uuid');
+            }
+        });
+
+        // GLOBAL SCOPE PLANT (isolasi data antar-plant)
+        // - Jika ada plant aktif di session (current_plant_uuid) -> filter ke plant itu.
+        //   Ini berlaku untuk user biasa (di-set otomatis oleh SetCurrentPlant)
+        //   MAUPUN super admin yang sedang "menyelami" satu plant.
+        // - Jika super admin dalam mode "Semua Plant" (tidak ada plant aktif)
+        //   -> tidak difilter, sehingga melihat seluruh plant.
+        // - Request publik (belum login) tidak terpengaruh dan bekerja via uuid eksplisit.
+        static::addGlobalScope('plant', function (Builder $query) {
+            $plantUuid = session('current_plant_uuid');
+
+            if ($plantUuid) {
+                $query->where('plant_uuid', $plantUuid);
             }
         });
     }
@@ -81,5 +102,25 @@ class Visitor extends Model
     public function checkouter()
     {
         return $this->belongsTo(User::class, 'checkout_by', 'uuid');
+    }
+
+    public function plant()
+    {
+        return $this->belongsTo(Plant::class, 'plant_uuid', 'uuid');
+    }
+
+    public function scopeByPlant(Builder $query, string $plantUuid)
+    {
+        return $query->where('plant_uuid', $plantUuid);
+    }
+
+    public function scopeToday(Builder $query)
+    {
+        return $query->whereDate('visit_datetime', today());
+    }
+
+    public function scopeDateRange(Builder $query, $startDate, $endDate)
+    {
+        return $query->whereBetween('visit_datetime', [$startDate, $endDate]);
     }
 }

@@ -373,7 +373,7 @@
                         @endcan
 
                         {{-- Tombol 2 --}}
-                        <a href="{{ route('reservasi.index') }}" target="_blank" class="group flex items-center justify-between p-4 bg-gray-50 hover:bg-blue-50 rounded-xl border border-transparent hover:border-blue-100 transition-all duration-200">
+                        <a href="{{ route('reservasi.create') }}" target="_blank" class="group flex items-center justify-between p-4 bg-gray-50 hover:bg-blue-50 rounded-xl border border-transparent hover:border-blue-100 transition-all duration-200">
                             <div class="flex items-center gap-4">
                                 <div class="w-10 h-10 rounded-lg bg-white flex items-center justify-center shadow-sm text-gray-400 group-hover:text-blue-500">
                                     <i class="fa-solid fa-link text-lg"></i>

@@ -7,6 +7,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdn.jsdelivr.net/npm/tom-select/dist/css/tom-select.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.44.0/tabler-icons.min.css">
     <script src="https://cdn.jsdelivr.net/npm/tom-select/dist/js/tom-select.complete.min.js"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
     <style>
@@ -54,45 +55,130 @@
     
     <nav class="bg-white shadow-md py-4 px-8 flex items-center justify-between sticky top-0 z-50">
         <div class="flex items-center">
-            <img src="assets/img/logo-cpi.png" alt="CPI Logo" class="h-10 mr-4">
+            <img src="{{ asset('assets/img/logo-cpi.png') }}" alt="CPI Logo" class="h-10 mr-4">
             <span class="text-xl font-bold hidden md:inline">PT. Charoen Pokphand Indonesia</span>
             <span class="text-xl font-bold md:hidden">PT. CPI</span>
         </div>
-        <div class="text-gray-600 font-medium text-sm md:text-base">Plant Salatiga</div>
+        <div class="text-gray-600 font-medium text-sm md:text-base"><span class="js-plant-name">Pilih Plant</span></div>
     </nav>
 
     <main class="flex-grow flex items-center justify-center p-4">
-        
-        <div id="main-page" class="relative container-card page-content max-w-4xl p-10 text-center flex flex-col items-center justify-center min-h-[400px] bg-white rounded-2xl shadow-xl">
 
-            <div class="bg-blue-50 p-4 rounded-full mb-6">
-                <svg class="w-16 h-16 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
-                </svg>
-            </div>
-            
-            <h1 class="text-3xl md:text-4xl font-extrabold mb-3 text-gray-900 tracking-tight">Sistem Penerimaan Tamu</h1>
-            <p class="text-lg md:text-xl mb-2 text-gray-600 font-medium">PT. Charoen Pokphand Indonesia</p>
-            
-            <div class="inline-flex items-center justify-center px-3 py-1 rounded-full bg-gray-100 text-gray-500 text-sm font-medium mb-8">
-                <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
-                Plant Salatiga
-            </div>
+        {{-- LANGKAH 0: PILIH PLANT (tampil pertama) --}}
+        <div id="plant-select-page" class="page-content max-w-4xl w-full">
 
-            <button id="btn-reservasi" class="group relative bg-blue-600 text-white font-bold py-4 px-10 rounded-xl shadow-lg hover:bg-blue-700 hover:shadow-blue-500/30 hover:-translate-y-1 transition-all duration-300 ease-in-out">
-                <span class="flex items-center">
-                    Reservasi Sekarang
-                    <svg class="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"></path></svg>
-                </span>
-            </button>
-            
-            <p class="mt-6 text-sm text-gray-400">*Mohon siapkan KTP/Identitas diri Anda untuk pengisian data.</p>
+            {{-- Header --}}
+            <div class="bg-white rounded-2xl border border-gray-200 p-8 mb-0">
+                <div class="flex flex-col items-center text-center pb-6 mb-6 border-b border-gray-100">
+                    <div class="w-12 h-12 rounded-xl bg-red-50 flex items-center justify-center mb-4">
+                        <svg class="w-6 h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"
+                                d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
+                        </svg>
+                    </div>
+                    <h1 class="text-xl font-semibold text-gray-900 mb-1">Pilih plant tujuan</h1>
+                    <p class="text-sm text-gray-500 max-w-sm">Pilih lokasi plant yang akan Anda kunjungi untuk melanjutkan proses reservasi.</p>
+                </div>
+
+                {{-- Grid plant — auto-fit: 1 kolom di hp, 2-4 kolom di desktop --}}
+                <div class="grid gap-3" style="grid-template-columns: repeat(auto-fit, minmax(200px, 1fr))">
+                    @php
+                    $themes = [
+                        ['bg' => '#c8102e', 'border' => '#fca5a5', 'shadow' => 'rgba(200,16,46,0.2)',  'ctaBg' => '#fef2f2', 'ctaText' => '#c8102e', 'icon' => 'ti-building-factory'],
+                        ['bg' => '#1d4ed8', 'border' => '#93c5fd', 'shadow' => 'rgba(29,78,216,0.2)',  'ctaBg' => '#eff6ff', 'ctaText' => '#1d4ed8', 'icon' => 'ti-building-warehouse'],
+                        ['bg' => '#15803d', 'border' => '#86efac', 'shadow' => 'rgba(21,128,61,0.2)',  'ctaBg' => '#f0fdf4', 'ctaText' => '#15803d', 'icon' => 'ti-building-community'],
+                        ['bg' => '#b45309', 'border' => '#fcd34d', 'shadow' => 'rgba(180,83,9,0.2)',   'ctaBg' => '#fffbeb', 'ctaText' => '#b45309', 'icon' => 'ti-building'],
+                        ['bg' => '#6d28d9', 'border' => '#c4b5fd', 'shadow' => 'rgba(109,40,217,0.2)', 'ctaBg' => '#f5f3ff', 'ctaText' => '#6d28d9', 'icon' => 'ti-building-skyscraper'],
+                        ['bg' => '#0f766e', 'border' => '#5eead4', 'shadow' => 'rgba(15,118,110,0.2)', 'ctaBg' => '#f0fdfa', 'ctaText' => '#0f766e', 'icon' => 'ti-building-estate'],
+                    ];
+                    @endphp
+                    @foreach ($plants as $i => $p)
+                    @php $t = $themes[$i % count($themes)]; @endphp
+                        <button type="button"
+                            class="plant-choice group text-left rounded-2xl overflow-hidden transition-all duration-150 focus:outline-none flex flex-col"
+                            style="border: 1.5px solid {{ $t['border'] }};"
+                            onmouseover="this.style.boxShadow='0 6px 20px {{ $t['shadow'] }}'; this.style.borderColor='{{ $t['bg'] }}'; this.style.transform='translateY(-3px)'"
+                            onmouseout="this.style.boxShadow=''; this.style.borderColor='{{ $t['border'] }}'; this.style.transform=''"
+                            data-uuid="{{ $p->uuid }}"
+                            data-code="{{ $p->code }}"
+                            data-name="Plant {{ $p->name }}"
+                            data-poster="{{ $p->poster_url }}">
+
+                            {{-- Hero band berwarna --}}
+                            <div class="relative flex flex-col gap-2 p-4" style="background: {{ $t['bg'] }}; min-height: 110px;">
+                                <div class="w-10 h-10 rounded-xl flex items-center justify-center" style="background: rgba(255,255,255,0.2);">
+                                    <i class="ti {{ $t['icon'] }} text-white" style="font-size:20px" aria-hidden="true"></i>
+                                </div>
+                                <div class="text-white font-bold text-base leading-tight" style="text-shadow: 0 1px 3px rgba(0,0,0,0.15)">
+                                    Plant {{ $p->name }}
+                                </div>
+                                <span class="absolute top-2.5 right-2.5 text-[10px] font-bold text-white px-1.5 py-0.5 rounded"
+                                    style="background: rgba(0,0,0,0.22); letter-spacing: 0.06em">
+                                    {{ $p->code }}
+                                </span>
+                            </div>
+
+                            {{-- Body --}}
+                            <div class="bg-white flex flex-col gap-1.5 p-3 flex-1">
+                                <div class="text-xs text-gray-400 flex items-center gap-1">
+                                    <i class="ti ti-map-pin" style="font-size:12px" aria-hidden="true"></i>
+                                    {{ $p->location ?? 'Indonesia' }}
+                                </div>
+                                <div class="mt-1 inline-flex items-center gap-1 text-[11px] font-semibold px-2.5 py-1.5 rounded-lg self-start"
+                                    style="background: {{ $t['ctaBg'] }}; color: {{ $t['ctaText'] }}">
+                                    Pilih
+                                    <i class="ti ti-arrow-right" style="font-size:12px" aria-hidden="true"></i>
+                                </div>
+                            </div>
+                        </button>
+                    @endforeach
+                </div>
+
+                @if ($plants->isEmpty())
+                    <p class="text-sm text-red-500 text-center mt-6">Belum ada plant aktif. Hubungi administrator.</p>
+                @endif
+            </div>
+        </div>
+
+        <div id="main-page" class="page-content page-hidden max-w-2xl w-full" style="display:none">
+            <div class="bg-white rounded-2xl border border-gray-200 overflow-hidden">
+                {{-- Hero --}}
+                <div class="flex flex-col items-center text-center px-8 py-10">
+                    <div class="inline-flex items-center gap-1.5 text-xs font-medium text-red-600 bg-red-50 border border-red-100 px-3 py-1 rounded-full mb-5">
+                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M17.657 16.657L13.414 20.9a2 2 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
+                        </svg>
+                        <span class="js-plant-name">Plant</span>
+                    </div>
+
+                    <h1 class="text-2xl font-semibold text-gray-900 mb-1">Selamat datang di PT. Charoen Pokphand Indonesia</h1>
+                    <p class="text-sm text-gray-500 mb-4">Sistem Penerimaan Tamu</p>
+
+                    <button id="btn-reservasi"
+                        class="inline-flex items-center gap-2 bg-red-600 hover:bg-red-700 text-white text-sm font-semibold px-7 py-3 rounded-xl transition-colors">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                        </svg>
+                        Reservasi sekarang
+                    </button>
+
+                    <p class="mt-4 text-xs text-gray-400 flex items-center gap-1.5">
+                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M10 6H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V8a2 2 0 00-2-2h-5m-4 0V5a2 2 0 114 0v1m-4 0a2 2 0 104 0"/>
+                        </svg>
+                        Siapkan KTP / identitas diri Anda sebelum melanjutkan.
+                    </p>
+                </div>
+            </div>
         </div>
 
         <div id="peraturan-page" class="container-card page-content page-hidden max-w-4xl p-10" style="display: none;">
             <h2 class="text-2xl font-bold mb-6 text-center">Tata Tertib Perusahaan</h2>
             <div class="text-gray-700 text-left mb-6 max-h-[50vh] overflow-y-auto min-h-[300px]">
-                <img src="assets/img/poster-peraturan-min.png" alt="Poster Peraturan Perusahaan" class="w-full h-auto rounded-lg shadow-md" loading="eager" decoding="async" width="600" height="800">
+                <img id="poster-peraturan" src="{{ asset('assets/img/poster-peraturan-min.png') }}" alt="Poster Peraturan Perusahaan" class="w-full h-auto rounded-lg shadow-md" loading="eager" decoding="async" width="600" height="800">
             </div>
             <div class="bg-blue-50 border border-blue-100 rounded-xl p-5 mb-6 shadow-sm flex items-start transition-colors hover:bg-blue-100/50">
                 <div class="flex items-center h-5 mt-0.5">
@@ -128,7 +214,8 @@
                         @endif
             <form action="{{ route('reservasi.store') }}" method="POST">
                 @csrf
-                
+                {{-- Plant tujuan dipilih di langkah awal (plant-select-page) --}}
+                <input type="hidden" name="plant_uuid" id="selected-plant-uuid" value="{{ old('plant_uuid') }}">
                 <div class="flex flex-col mb-10 border-b pb-6">
                     <h2 class="text-3xl font-bold text-gray-800 flex items-center gap-3">
                         <svg class="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
@@ -609,12 +696,32 @@
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             // 1. PAGE NAVIGATION LOGIC (CLEANED)
+            const plantSelectPage = document.getElementById('plant-select-page');
             const mainPage = document.getElementById('main-page');
             const peraturanPage = document.getElementById('peraturan-page');
             const formPage = document.getElementById('form-page');
             const btnReservasi = document.getElementById('btn-reservasi');
             const btnSetuju = document.getElementById('btn-setuju');
             const checkPeraturan = document.getElementById('check-peraturan');
+
+            // Elemen yang dipengaruhi pilihan plant
+            const plantNameLabels = document.querySelectorAll('.js-plant-name');
+            const posterImg = document.getElementById('poster-peraturan');
+            const hiddenPlantInput = document.getElementById('selected-plant-uuid');
+            const plantChoiceBtns = document.querySelectorAll('.plant-choice');
+
+            // Peta plant (untuk memulihkan pilihan saat terjadi error validasi)
+            const PLANTS = @json($plants->mapWithKeys(fn ($p) => [$p->uuid => [
+                'name'   => 'Plant ' . $p->name,
+                'poster' => $p->poster_url,
+            ]]));
+
+            // Terapkan plant terpilih ke seluruh elemen terkait
+            function applyPlant(uuid, name, poster) {
+                if (hiddenPlantInput) hiddenPlantInput.value = uuid;
+                plantNameLabels.forEach(el => el.textContent = name);
+                if (posterImg && poster) posterImg.src = poster;
+            }
 
             function showPage(pageToShow) {
                 const currentPage = document.querySelector('.page-content:not([style*="display: none"])');
@@ -636,12 +743,26 @@
             // Check Error Laravel
             const hasErrors = {{ $errors->any() ? 'true' : 'false' }};
             if (hasErrors) {
+                // Pulihkan plant yang sebelumnya dipilih (dari old input) lalu langsung ke form
+                const oldUuid = @json(old('plant_uuid'));
+                if (oldUuid && PLANTS[oldUuid]) {
+                    applyPlant(oldUuid, PLANTS[oldUuid].name, PLANTS[oldUuid].poster);
+                }
+                if (plantSelectPage) plantSelectPage.style.display = 'none';
                 mainPage.style.display = 'none';
                 formPage.style.display = 'block';
                 formPage.classList.remove('page-hidden');
                 checkPeraturan.checked = true;
                 btnSetuju.disabled = false;
             }
+
+            // Pilih plant -> set data, perbarui tampilan, lanjut ke halaman utama
+            plantChoiceBtns.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    applyPlant(btn.dataset.uuid, btn.dataset.name, btn.dataset.poster);
+                    showPage(mainPage);
+                });
+            });
 
             btnReservasi.addEventListener('click', () => showPage(peraturanPage));
             btnSetuju.addEventListener('click', () => showPage(formPage));

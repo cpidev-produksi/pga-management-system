@@ -25,9 +25,14 @@ class LogReservasiVisit
             // 2. Cek Lokasi
             $position = Location::get($ip);
 
+            // 2b. Tangkap plant dari link reservasi (route param {plant:code}), jika ada.
+            $plant = $request->route('plant');
+            $plantUuid = is_object($plant) ? $plant->uuid : null;
+
             // 3. Simpan Log
             ReservasiLog::create([
                 'user_uuid'     => null, // Sengaja NULL karena ini route public
+                'plant_uuid'    => $plantUuid,
                 'ip_address'    => $ip,
                 'url'           => $request->fullUrl(),
                 'method'        => $request->method(),

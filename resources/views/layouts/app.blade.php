@@ -225,7 +225,6 @@
                        :class="isDesktopMini ? 'lg:w-0 lg:h-0 lg:opacity-0 lg:overflow-hidden' : 'w-auto opacity-100'">
                         All system develop by<br>
                         <span class="font-bold text-gray-500">Team Jateng Improvement</span><br>
-                        Plant - Salatiga
                     </p>
                 </div>
             </div>
@@ -256,7 +255,60 @@
                             </button>
                         </div>
 
-                        <div class="flex-1"></div>
+                        <div class="flex-1 flex items-center">
+                            @auth
+                                @php
+                                    $isSA = auth()->user()->is_super_admin;
+                                    $activePlantName = session('current_plant_name');
+                                    $allMode = $isSA && ! session('current_plant_uuid');
+                                @endphp
+
+                                @if ($isSA)
+                                    {{-- Super Admin: switcher plant --}}
+                                    <div x-data="{ plantOpen: false }" class="relative">
+                                        <button @click="plantOpen = !plantOpen"
+                                            class="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm font-semibold text-gray-700 bg-gray-50 hover:bg-gray-100 border border-gray-200 transition">
+                                            <i class="fa-solid fa-industry text-red-500"></i>
+                                            <span>{{ $allMode ? 'Semua Plant' : ($activePlantName ?? 'Pilih Plant') }}</span>
+                                            <i class="fa-solid fa-chevron-down text-[10px] text-gray-400" :class="{ 'rotate-180': plantOpen }"></i>
+                                        </button>
+                                        <div x-show="plantOpen" @click.away="plantOpen = false" x-transition style="display:none"
+                                            class="absolute left-0 top-11 w-60 rounded-xl shadow-lg bg-white ring-1 ring-black ring-opacity-5 py-2 z-50 border border-gray-100">
+                                            <form method="POST" action="{{ route('plants.all') }}">
+                                                @csrf
+                                                <button type="submit"
+                                                    class="w-full text-left px-4 py-2 text-sm hover:bg-gray-100 flex items-center gap-2 {{ $allMode ? 'text-blue-600 font-semibold' : 'text-gray-700' }}">
+                                                    <i class="fa-solid fa-layer-group w-4 text-center"></i> Semua Plant
+                                                </button>
+                                            </form>
+                                            <div class="border-t border-gray-50 my-1"></div>
+                                            @foreach (\App\Models\Plant::where('is_active', true)->orderBy('name')->get() as $p)
+                                                <form method="POST" action="{{ route('plants.switch', $p->uuid) }}">
+                                                    @csrf
+                                                    <button type="submit"
+                                                        class="w-full text-left px-4 py-2 text-sm hover:bg-gray-100 flex items-center gap-2 {{ session('current_plant_uuid') === $p->uuid ? 'text-red-600 font-semibold' : 'text-gray-700' }}">
+                                                        <i class="fa-solid fa-industry w-4 text-center"></i>
+                                                        <span>{{ $p->name }}</span>
+                                                        <span class="text-[10px] text-gray-400 ml-auto">{{ $p->code }}</span>
+                                                    </button>
+                                                </form>
+                                            @endforeach
+                                            <div class="border-t border-gray-50 my-1"></div>
+                                            <a href="{{ route('plants.index') }}"
+                                               class="block px-4 py-2 text-sm text-gray-500 hover:bg-gray-100">
+                                                <i class="fa-solid fa-gear w-4 text-center mr-1"></i> Kelola Plant
+                                            </a>
+                                        </div>
+                                    </div>
+                                @else
+                                    {{-- User biasa: indikator plant (read-only) --}}
+                                    <span class="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm font-semibold text-gray-600 bg-gray-50 border border-gray-200">
+                                        <i class="fa-solid fa-industry text-red-500"></i>
+                                        {{ $activePlantName ?? (auth()->user()->plant->name ?? 'Plant') }}
+                                    </span>
+                                @endif
+                            @endauth
+                        </div>
 
                         <div class="flex items-center ms-6 relative">
                             <button id="tour-profile-dropdown" @click="userDropdownOpen = !userDropdownOpen" 
